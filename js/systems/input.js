@@ -20,13 +20,13 @@ InputSystem.prototype.run = function() {
 InputSystem.prototype.onClick = function() {
     // console.log("click");
     var bird = this.entities[0];
-    bird.components.physics.velocity.y = 0.7;
+    bird.components.physics.velocity.y = 0.6;
 };
 
 InputSystem.prototype.onTouch = function() {
     console.log("touchstart");
     var bird = this.entities[0];
-    bird.components.physics.velocity.y = 0.7;
+    bird.components.physics.velocity.y = 0.6;
 };
 
 InputSystem.prototype.onGameStart = function() {
@@ -36,6 +36,7 @@ InputSystem.prototype.onGameStart = function() {
     bird.components.physics.status = 'move';
     bird.components.physics.score = 0; //reset score
     document.getElementById('score').innerHTML = 0;
+    document.getElementById('final_score').innerHTML = 0;
     bird.components.physics.position.x = 0; //reset position
     bird.components.physics.position.y = 0.5; 
     bird.components.physics.velocity.x = 0.02; //reset velocity

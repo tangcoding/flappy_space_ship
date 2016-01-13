@@ -6,6 +6,7 @@ PipeGraphicsComponent.prototype.draw = function(context) {
 
 	 var position = this.entity.components.physics.position;
 	 var size = this.entity.components.physics.size;
+	 // console.log(position.y );
 
 	context.save();
     var img = document.getElementById("rock");

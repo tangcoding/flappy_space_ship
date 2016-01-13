@@ -1,7 +1,7 @@
 var PhysicsComponent = function(entity) {
     this.entity = entity;
     this.type = "circle";
-    this.radius = 0.03;
+    this.radius = 0.035;
     this.status = 'still';
     this.score = 0;
 

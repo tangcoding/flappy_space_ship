@@ -118,13 +118,6 @@ BirdGraphicsComponent.prototype.draw = function(context) {
      // console.log("x: "+ position.x + "; y: " + position.y);
 
 	context.save();
-    // context.translate(position.x, position.y);
-    // context.fillStyle = '#' + Math.random().toString(16).slice(2, 8);
-    // context.scale(size, size);
-    // context.beginPath();
-    // context.arc(position.x, position.y, radius, 0, 2*Math.PI);
-    // context.fill();
-    // context.closePath();
     var image = document.getElementById("bird");
     context.drawImage(image, position.x-radius/2, position.y-radius/2, radius, radius);
     context.restore();
@@ -140,6 +133,7 @@ PipeGraphicsComponent.prototype.draw = function(context) {
 
 	 var position = this.entity.components.physics.position;
 	 var size = this.entity.components.physics.size;
+	 // console.log(position.y );
 
 	context.save();
     var img = document.getElementById("rock");
@@ -152,7 +146,7 @@ exports.PipeGraphicsComponent = PipeGraphicsComponent;
 var PhysicsComponent = function(entity) {
     this.entity = entity;
     this.type = "circle";
-    this.radius = 0.03;
+    this.radius = 0.035;
     this.status = 'still';
     this.score = 0;
 
@@ -303,8 +297,10 @@ FlappyBird.prototype.add_pipes = function() {
         };
 
         var pipe_y = random_range(-0.25, 0); //randomly set the left_bottom cornor of pipe
+        var pipe_gap = random_range(0.02, 0.06);
+        pipe_gap += 0.75;
         this.entities.push(new pipe.Pipe(pipe_y));
-        this.entities.push(new pipe.Pipe(pipe_y + 0.85)); // draw a pair of pipes
+        this.entities.push(new pipe.Pipe(pipe_y + pipe_gap)); // draw a pair of pipes
     }
 };
 
@@ -326,9 +322,13 @@ document.addEventListener('DOMContentLoaded', function() {
 // });
 
 },{"./flappy_bird":9}],11:[function(require,module,exports){
+var storageSystem = require("./storage");
+
+
 var CollisionSystem = function(entities) {
     this.entities = entities;
     this.end_game = false;
+    this.storageSystem = new storageSystem.StorageSystem(entities);
 };
 
 CollisionSystem.prototype.tick = function() {
@@ -367,8 +367,9 @@ CollisionSystem.prototype.tick = function() {
 
         // }
     }
+ 
+    if(this.end_game){  // if game end
 
-    if(this.end_game){ 
         // console.log('end game');
         this.entities.length = 1;
         entityA.components.physics.status = "still";
@@ -378,12 +379,14 @@ CollisionSystem.prototype.tick = function() {
         // console.log(this.entities);
         document.getElementById('result').style.display='block';
         document.getElementById('score_board').style.display = 'none';
+        this.storageSystem.store_score();
+        this.storageSystem.show_scores();
     }
 };
 
 
 exports.CollisionSystem = CollisionSystem;
-},{}],12:[function(require,module,exports){
+},{"./storage":15}],12:[function(require,module,exports){
 var GraphicsSystem = function(entities) {
     this.entities = entities;
     // Canvas is where we draw
@@ -465,13 +468,13 @@ InputSystem.prototype.run = function() {
 InputSystem.prototype.onClick = function() {
     // console.log("click");
     var bird = this.entities[0];
-    bird.components.physics.velocity.y = 0.7;
+    bird.components.physics.velocity.y = 0.6;
 };
 
 InputSystem.prototype.onTouch = function() {
     console.log("touchstart");
     var bird = this.entities[0];
-    bird.components.physics.velocity.y = 0.7;
+    bird.components.physics.velocity.y = 0.6;
 };
 
 InputSystem.prototype.onGameStart = function() {
@@ -481,6 +484,7 @@ InputSystem.prototype.onGameStart = function() {
     bird.components.physics.status = 'move';
     bird.components.physics.score = 0; //reset score
     document.getElementById('score').innerHTML = 0;
+    document.getElementById('final_score').innerHTML = 0;
     bird.components.physics.position.x = 0; //reset position
     bird.components.physics.position.y = 0.5; 
     bird.components.physics.velocity.x = 0.02; //reset velocity
@@ -538,4 +542,66 @@ PhysicsSystem.prototype.tick = function() {
 };
 
 exports.PhysicsSystem = PhysicsSystem;
-},{"./collision":11}]},{},[10]);
+},{"./collision":11}],15:[function(require,module,exports){
+var StorageSystem = function(entities) {
+    this.entities = entities;
+};
+
+StorageSystem.prototype.support_local_storage = function() {
+  try {
+    return 'localStorage' in window && window['localStorage'] !== null;
+  } catch (e) {
+    return false;
+  }
+};
+
+StorageSystem.prototype.store_score = function() {
+
+    if(!this.support_local_storage){return false;}
+
+    var current_score = this.entities[0].components.physics.score;
+    var tmp_array = [ 0, 0, 0, 0, 0]; //tmp array for top 5 scores
+
+    //copy all top scores to tmp array and find insert index of current score
+    var insert_idx = 0;
+    for(var i= 0; i <5; i++){
+        if(localStorage["flappy_space_ship.score." + i ] != null){
+            tmp_array[i] = localStorage["flappy_space_ship.score." + i ];
+            if(localStorage["flappy_space_ship.score." + i ] > current_score){
+                insert_idx++;
+            }
+        }
+    }
+
+    // insert current score
+    if(insert_idx < 5){
+        localStorage["flappy_space_ship.score." + insert_idx ] = current_score;
+        for(var i = insert_idx+1; i < 5; i++){
+            localStorage["flappy_space_ship.score." + i ] = tmp_array[i-1];
+        }
+    }
+
+};
+
+StorageSystem.prototype.show_scores = function() {
+
+    if(!this.support_local_storage){return false;}
+
+    var top_scores= document.getElementById('top_scores');
+    top_scores.style.display='block';
+    top_scores.innerHTML = '<h3>Top Scores</h3><hr>';
+
+    for(var i= 0; i <5; i++){
+        if(localStorage["flappy_space_ship.score." + i ] != null){
+            var text_node = document.createElement("h3");
+            text_node.innerHTML = '#' + (i+1) + '.  ' +localStorage["flappy_space_ship.score." + i ];
+            top_scores.appendChild(text_node);
+        }
+    }
+
+};
+
+
+
+exports.StorageSystem = StorageSystem;
+},{}]},{},[10]);

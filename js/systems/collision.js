@@ -1,6 +1,10 @@
+var storageSystem = require("./storage");
+
+
 var CollisionSystem = function(entities) {
     this.entities = entities;
     this.end_game = false;
+    this.storageSystem = new storageSystem.StorageSystem(entities);
 };
 
 CollisionSystem.prototype.tick = function() {
@@ -39,8 +43,9 @@ CollisionSystem.prototype.tick = function() {
 
         // }
     }
+ 
+    if(this.end_game){  // if game end
 
-    if(this.end_game){ 
         // console.log('end game');
         this.entities.length = 1;
         entityA.components.physics.status = "still";
@@ -50,6 +55,8 @@ CollisionSystem.prototype.tick = function() {
         // console.log(this.entities);
         document.getElementById('result').style.display='block';
         document.getElementById('score_board').style.display = 'none';
+        this.storageSystem.store_score();
+        this.storageSystem.show_scores();
     }
 };
 
