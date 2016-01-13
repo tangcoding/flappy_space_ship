@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<link rel="stylesheet" type="text/css" href="css/styles.css">
+</head>
+
+<body>
+	<canvas id="main-canvas"></canvas>
+	<div style="display:none;">
+	  <img id="bird" src="img/bird.png">
+	  <img id="rock" src="img/rock.jpg">
+	</div>
+
+	<div class="info_page" id="intro">
+		<h1>Flappy Space Ship</h1>
+		<h3>Click or Tap &#8593;</h3>
+		<button id="start">Start</button>
+	</div><!-- #intro -->
+
+	<div class="info_page" id="result">
+		<h1>Your Final Score: <span id="final_score">0</span></h1>
+		<button id="new_game">New Game</button>
+	</div><!-- #result -->
+
+	<div id="score_board" class="disable_select">
+		<h1>score: <span id="score">0</span></h1>
+		<button id="pause">Pause</h3>
+	</div><!-- #result -->
+
+	<script type="text/javascript" src="js/app.js"></script>
+</body>
+</html>
