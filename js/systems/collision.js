@@ -1,5 +1,5 @@
-var storageSystem = require("./storage");
-
+var storageSystem = require("./storage_indexdb");
+// var storageSystem = require("./storage_localstorage");
 
 var CollisionSystem = function(entities) {
     this.entities = entities;
@@ -56,7 +56,6 @@ CollisionSystem.prototype.tick = function() {
         document.getElementById('result').style.display='block';
         document.getElementById('score_board').style.display = 'none';
         this.storageSystem.store_score();
-        this.storageSystem.show_scores();
     }
 };
 

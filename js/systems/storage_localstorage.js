@@ -36,6 +36,9 @@ StorageSystem.prototype.store_score = function() {
         }
     }
 
+    // show top scores
+    this.show_scores().bind(this);
+
 };
 
 StorageSystem.prototype.show_scores = function() {

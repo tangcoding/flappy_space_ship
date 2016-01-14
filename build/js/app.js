@@ -130,7 +130,7 @@ var PhysicsComponent = function(entity) {
         y: 0 
     };
     this.velocity = {
-        x: -0.12,
+        x: -0.22,
         y: 0
     };
 };
@@ -152,7 +152,7 @@ var collisionComponent = require("../components/collision/rect");
 var Bird = function() {
     var physics = new physicsComponent.PhysicsComponent(this);
     physics.position.y = 0.5;
-    physics.acceleration.y = -2;
+    // physics.acceleration.y = -2;
 
     var graphics = new graphicsComponent.BirdGraphicsComponent(this);
 	var collision = new collisionComponent.RectCollisionComponent(this, physics.size);
@@ -209,15 +209,6 @@ var pipe = require('./entities/pipe');
 var FlappyBird = function() {
     this.entities = [new bird.Bird()];
 
-    var random_range = function(min, max){
-    	return Math.random()* (max-min) + min; 
-    };
-
-    var pipe_y = random_range(-0.5, 0); //randomly set the left_bottom cornor of pipe
-
-    this.entities.push(new pipe.Pipe(pipe_y));
-    this.entities.push(new pipe.Pipe(pipe_y + 0.85)); // draw a pair of pipes
-
     this.graphics = new graphicsSystem.GraphicsSystem(this.entities);
     this.physics = new physicsSystem.PhysicsSystem(this.entities);
     this.input = new inputSystem.InputSystem(this.entities);
@@ -227,7 +218,7 @@ FlappyBird.prototype.run = function() {
     this.graphics.run();
     this.physics.run();
     this.input.run();
-    window.setInterval(this.add_pipes.bind(this), 5000);
+    window.setInterval(this.add_pipes.bind(this), 2000);
 };
 
 FlappyBird.prototype.add_pipes = function() {
@@ -262,8 +253,8 @@ document.addEventListener('DOMContentLoaded', function() {
 // });
 
 },{"./flappy_bird":8}],10:[function(require,module,exports){
-var storageSystem = require("./storage");
-
+var storageSystem = require("./storage_indexdb");
+// var storageSystem = require("./storage_localstorage");
 
 var CollisionSystem = function(entities) {
     this.entities = entities;
@@ -320,13 +311,12 @@ CollisionSystem.prototype.tick = function() {
         document.getElementById('result').style.display='block';
         document.getElementById('score_board').style.display = 'none';
         this.storageSystem.store_score();
-        this.storageSystem.show_scores();
     }
 };
 
 
 exports.CollisionSystem = CollisionSystem;
-},{"./storage":14}],11:[function(require,module,exports){
+},{"./storage_indexdb":14}],11:[function(require,module,exports){
 var GraphicsSystem = function(entities) {
     this.entities = entities;
     // Canvas is where we draw
@@ -488,56 +478,79 @@ var StorageSystem = function(entities) {
     this.entities = entities;
 };
 
-StorageSystem.prototype.support_local_storage = function() {
-  try {
-    return 'localStorage' in window && window['localStorage'] !== null;
-  } catch (e) {
-    return false;
-  }
+StorageSystem.prototype.support_indexdb = function() {
+  if("indexedDB" in window) {return true;}
+  else{return false;}
 };
 
 StorageSystem.prototype.store_score = function() {
-
-    if(!this.support_local_storage){return false;}
-
+    var db, updated_scores;
+    var self = this;
     var current_score = this.entities[0].components.physics.score;
-    var tmp_array = [ 0, 0, 0, 0, 0]; //tmp array for top 5 scores
 
-    //copy all top scores to tmp array and find insert index of current score
-    var insert_idx = 0;
-    for(var i= 0; i <5; i++){
-        if(localStorage["flappy_space_ship.score." + i ] != null){
-            tmp_array[i] = localStorage["flappy_space_ship.score." + i ];
-            if(localStorage["flappy_space_ship.score." + i ] > current_score){
-                insert_idx++;
+    if(!this.support_indexdb){return false;}
+
+
+    var openRequest = indexedDB.open("fss",1);
+
+    openRequest.onupgradeneeded = function(e) {
+        console.log("running onupgradeneeded");
+        var thisDB = e.target.result;
+
+        if(!thisDB.objectStoreNames.contains("top_scores")) {
+            thisDB.createObjectStore("top_scores");
+        }
+    }
+
+    openRequest.onsuccess = function(e) {
+        // console.log("Success!");
+        db = e.target.result;
+        var transaction = db.transaction(["top_scores"],"readwrite").objectStore("top_scores");
+        var scores_array = transaction.get('scores');
+        console.log(scores_array);
+
+        scores_array.onsuccess = function(e) {
+            console.log('get array success');
+            var result = e.target.result;
+            console.log(result);
+
+            if(result == undefined){ // if not score_array, create one
+                var tmp = [current_score];
+                var request =  transaction.add(tmp ,'scores');
+                request.onsuccess = function(e) {
+                    console.log("create");
+                } 
+                return;      
             }
+           
+            var insert_idx = 0;
+            for(var i= 0 ; i < result.length; i++){
+                if(result[i] >= current_score){
+                    insert_idx++;
+                }
+            }
+
+            result.splice(insert_idx, 0, current_score);
+            result.length = 5;
+            console.log(result);
+            updated_scores = result;
+            transaction.put(result,'scores');
+            self.show_scores(updated_scores);
         }
     }
-
-    // insert current score
-    if(insert_idx < 5){
-        localStorage["flappy_space_ship.score." + insert_idx ] = current_score;
-        for(var i = insert_idx+1; i < 5; i++){
-            localStorage["flappy_space_ship.score." + i ] = tmp_array[i-1];
-        }
-    }
-
 };
 
-StorageSystem.prototype.show_scores = function() {
-
-    if(!this.support_local_storage){return false;}
+StorageSystem.prototype.show_scores = function(score_array) {
 
     var top_scores= document.getElementById('top_scores');
     top_scores.style.display='block';
     top_scores.innerHTML = '<h3>Top Scores</h3><hr>';
 
-    for(var i= 0; i <5; i++){
-        if(localStorage["flappy_space_ship.score." + i ] != null && localStorage["flappy_space_ship.score." + i ] != 0){
-            var text_node = document.createElement("h3");
-            text_node.innerHTML = '#' + (i+1) + '.&nbsp;&nbsp;&nbsp;' +localStorage["flappy_space_ship.score." + i ];
-            top_scores.appendChild(text_node);
-        }
+    for(var i= 0; i <score_array.length; i++){
+        if(score_array[i]==0) return;
+        var text_node = document.createElement("h3");
+        text_node.innerHTML = '#' + (i+1) + '.&nbsp;&nbsp;&nbsp;' +score_array[i];
+        top_scores.appendChild(text_node);
     }
 
 };

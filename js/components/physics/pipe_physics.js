@@ -13,7 +13,7 @@ var PhysicsComponent = function(entity) {
         y: 0 
     };
     this.velocity = {
-        x: -0.12,
+        x: -0.22,
         y: 0
     };
 };
