@@ -13,7 +13,7 @@ var FlappyBird = function() {
     	return Math.random()* (max-min) + min; 
     };
 
-    var pipe_y = random_range(-0.25, 0); //randomly set the left_bottom cornor of pipe
+    var pipe_y = random_range(-0.5, 0); //randomly set the left_bottom cornor of pipe
 
     this.entities.push(new pipe.Pipe(pipe_y));
     this.entities.push(new pipe.Pipe(pipe_y + 0.85)); // draw a pair of pipes
@@ -36,9 +36,9 @@ FlappyBird.prototype.add_pipes = function() {
             return Math.random()* (max-min) + min; 
         };
 
-        var pipe_y = random_range(-0.25, 0); //randomly set the left_bottom cornor of pipe
-        var pipe_gap = random_range(0.02, 0.06);
-        pipe_gap += 0.75;
+        var pipe_y = random_range(-0.5, 0); //randomly set the left_bottom cornor of pipe
+        var pipe_gap = random_range(0.03, 0.06);
+        pipe_gap += 0.85;
         this.entities.push(new pipe.Pipe(pipe_y));
         this.entities.push(new pipe.Pipe(pipe_y + pipe_gap)); // draw a pair of pipes
     }

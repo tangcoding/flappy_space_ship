@@ -33,7 +33,7 @@ RectCollisionComponent.prototype.collideRect = function(entity) {
     var leftB = positionB.x ;
     var rightB = positionB.x + sizeB.x ;
     var bottomB = positionB.y ;
-    var topB = positionB.y ;
+    var topB = positionB.y + sizeB.y;
 
     return !(leftA > rightB || leftB > rightA ||
              bottomA > topB || bottomB > topA);

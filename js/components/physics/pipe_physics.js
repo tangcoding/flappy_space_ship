@@ -5,7 +5,7 @@ var PhysicsComponent = function(entity) {
 
     this.size= {
         x: 0.1,
-        y: 0.5
+        y: 0.6
     };
 
     this.position = {
@@ -13,7 +13,7 @@ var PhysicsComponent = function(entity) {
         y: 0 
     };
     this.velocity = {
-        x: -0.1,
+        x: -0.12,
         y: 0
     };
 };

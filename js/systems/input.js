@@ -33,7 +33,6 @@ InputSystem.prototype.onGameStart = function() {
     // console.log("start");
     document.getElementById('intro').style.display = 'none';
     var bird = this.entities[0];
-    bird.components.physics.status = 'move';
     bird.components.physics.score = 0; //reset score
     document.getElementById('score').innerHTML = 0;
     document.getElementById('final_score').innerHTML = 0;
@@ -41,6 +40,8 @@ InputSystem.prototype.onGameStart = function() {
     bird.components.physics.position.y = 0.5; 
     bird.components.physics.velocity.x = 0.02; //reset velocity
     bird.components.physics.velocity.y = 0; 
+
+    window.setTimeout(function(){bird.components.physics.status = 'move';}, 200);   
 
     document.getElementById('score_board').style.display = 'block';
 };
@@ -52,10 +53,10 @@ InputSystem.prototype.newGame = function() {
 };
 
 InputSystem.prototype.pauseGame = function() {
-    console.log('pause');
+    // console.log('pause');
     var bird = this.entities[0];
     if(bird.components.physics.status == 'still'){
-        bird.components.physics.status = 'move';
+        window.setTimeout(function(){bird.components.physics.status = 'move';}, 200); 
         this.pause_btn.innerHTML = 'Pause';
     }
     else{

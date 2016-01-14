@@ -11,6 +11,8 @@ PipeGraphicsComponent.prototype.draw = function(context) {
 	context.save();
     var img = document.getElementById("rock");
     context.drawImage( img, position.x , position.y , size.x, size.y);
+    // context.fillStyle ="green";
+    // context.fillRect(position.x , position.y , size.x, size.y);
     context.restore();
 };
 

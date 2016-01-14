@@ -4,12 +4,12 @@ var BirdGraphicsComponent = function(entity) {
 
 BirdGraphicsComponent.prototype.draw = function(context) {
 	 var position = this.entity.components.physics.position;
-     var radius = this.entity.components.physics.radius;
+     var size = this.entity.components.physics.size;
      // console.log("x: "+ position.x + "; y: " + position.y);
 
 	context.save();
     var image = document.getElementById("bird");
-    context.drawImage(image, position.x-radius/2, position.y-radius/2, radius, radius);
+    context.drawImage(image, position.x, position.y, size.x, size.y);
     context.restore();
 };
 

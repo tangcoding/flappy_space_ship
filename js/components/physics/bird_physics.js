@@ -1,9 +1,13 @@
 var PhysicsComponent = function(entity) {
     this.entity = entity;
-    this.type = "circle";
-    this.radius = 0.035;
+    this.type = "rect";
     this.status = 'still';
     this.score = 0;
+
+    this.size= {
+        x: 0.07,
+        y: 0.07
+    };
 
     this.position = {
         x: 0,
