@@ -49,7 +49,7 @@ StorageSystem.prototype.show_scores = function() {
     for(var i= 0; i <5; i++){
         if(localStorage["flappy_space_ship.score." + i ] != null && localStorage["flappy_space_ship.score." + i ] != 0){
             var text_node = document.createElement("h3");
-            text_node.innerHTML = '#' + (i+1) + '.  ' +localStorage["flappy_space_ship.score." + i ];
+            text_node.innerHTML = '#' + (i+1) + '.&nbsp;&nbsp;&nbsp;' +localStorage["flappy_space_ship.score." + i ];
             top_scores.appendChild(text_node);
         }
     }
