@@ -100,7 +100,7 @@ var PhysicsComponent = function(entity) {
     };
     this.acceleration = {
         x: 0,
-        y: 0
+        y: -1.5
     };
 };
 
@@ -408,13 +408,13 @@ InputSystem.prototype.run = function() {
 InputSystem.prototype.onClick = function() {
     // console.log("click");
     var bird = this.entities[0];
-    bird.components.physics.velocity.y = 0.6;
+    bird.components.physics.velocity.y = 0.5;
 };
 
 InputSystem.prototype.onTouch = function() {
-    console.log("touchstart");
+    // console.log("touchstart");
     var bird = this.entities[0];
-    bird.components.physics.velocity.y = 0.6;
+    bird.components.physics.velocity.y = 0.5;
 };
 
 InputSystem.prototype.onGameStart = function() {

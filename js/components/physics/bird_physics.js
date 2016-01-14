@@ -19,7 +19,7 @@ var PhysicsComponent = function(entity) {
     };
     this.acceleration = {
         x: 0,
-        y: 0
+        y: -1.5
     };
 };
 
