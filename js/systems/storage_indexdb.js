@@ -18,7 +18,7 @@ StorageSystem.prototype.store_score = function() {
     var openRequest = indexedDB.open("fss",1);
 
     openRequest.onupgradeneeded = function(e) {
-        console.log("running onupgradeneeded");
+        // console.log("running onupgradeneeded");
         var thisDB = e.target.result;
 
         if(!thisDB.objectStoreNames.contains("top_scores")) {
@@ -31,19 +31,14 @@ StorageSystem.prototype.store_score = function() {
         db = e.target.result;
         var transaction = db.transaction(["top_scores"],"readwrite").objectStore("top_scores");
         var scores_array = transaction.get('scores');
-        console.log(scores_array);
 
         scores_array.onsuccess = function(e) {
-            console.log('get array success');
             var result = e.target.result;
-            console.log(result);
 
             if(result == undefined){ // if not score_array, create one
                 var tmp = [current_score];
                 var request =  transaction.add(tmp ,'scores');
-                request.onsuccess = function(e) {
-                    console.log("create");
-                } 
+                request.onsuccess = function(e) {} 
                 return;      
             }
            
@@ -56,7 +51,6 @@ StorageSystem.prototype.store_score = function() {
 
             result.splice(insert_idx, 0, current_score);
             result.length = 5;
-            console.log(result);
             updated_scores = result;
             transaction.put(result,'scores');
             self.show_scores(updated_scores);
