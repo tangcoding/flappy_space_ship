@@ -1,3 +1,5 @@
+var pipe = require('../entities/pipe');
+
 var GraphicsSystem = function(entities) {
     this.entities = entities;
     // Canvas is where we draw
@@ -11,6 +13,7 @@ GraphicsSystem.prototype.run = function() {
     // Run the render loop
     // window.requestAnimationFrame(this.tick.bind(this));
     window.setInterval(this.tick.bind(this), 1000 /60);
+    window.setInterval(this.add_pipes.bind(this), 2000);
 };
 
 GraphicsSystem.prototype.tick = function() {
@@ -55,5 +58,20 @@ GraphicsSystem.prototype.tick = function() {
     // window.requestAnimationFrame(this.tick.bind(this));
     
 };
+
+GraphicsSystem.prototype.add_pipes = function() {
+    if(this.entities[0].components.physics.status == 'move'){
+        var random_range = function(min, max){
+            return Math.random()* (max-min) + min; 
+        };
+
+        var pipe_y = random_range(-0.5, 0); //randomly set the left_bottom cornor of pipe
+        var pipe_gap = random_range(0.03, 0.06);
+        pipe_gap += 0.85;
+        this.entities.push(new pipe.Pipe(pipe_y));
+        this.entities.push(new pipe.Pipe(pipe_y + pipe_gap)); // draw a pair of pipes
+    }
+};
+
 
 exports.GraphicsSystem = GraphicsSystem;

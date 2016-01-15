@@ -204,7 +204,7 @@ var physicsSystem = require('./systems/physics');
 var inputSystem = require('./systems/input');
 
 var bird = require('./entities/bird');
-var pipe = require('./entities/pipe');
+// var pipe = require('./entities/pipe');
 
 var FlappyBird = function() {
     this.entities = [new bird.Bird()];
@@ -218,26 +218,11 @@ FlappyBird.prototype.run = function() {
     this.graphics.run();
     this.physics.run();
     this.input.run();
-    window.setInterval(this.add_pipes.bind(this), 2000);
-};
-
-FlappyBird.prototype.add_pipes = function() {
-    if(this.entities[0].components.physics.status == 'move'){
-        var random_range = function(min, max){
-            return Math.random()* (max-min) + min; 
-        };
-
-        var pipe_y = random_range(-0.5, 0); //randomly set the left_bottom cornor of pipe
-        var pipe_gap = random_range(0.03, 0.06);
-        pipe_gap += 0.85;
-        this.entities.push(new pipe.Pipe(pipe_y));
-        this.entities.push(new pipe.Pipe(pipe_y + pipe_gap)); // draw a pair of pipes
-    }
 };
 
 
 exports.FlappyBird = FlappyBird;
-},{"./entities/bird":6,"./entities/pipe":7,"./systems/graphics":11,"./systems/input":12,"./systems/physics":13}],9:[function(require,module,exports){
+},{"./entities/bird":6,"./systems/graphics":11,"./systems/input":12,"./systems/physics":13}],9:[function(require,module,exports){
 var flappyBird = require('./flappy_bird');
 
 document.addEventListener('DOMContentLoaded', function() {
@@ -317,6 +302,8 @@ CollisionSystem.prototype.tick = function() {
 
 exports.CollisionSystem = CollisionSystem;
 },{"./storage_localstorage":14}],11:[function(require,module,exports){
+var pipe = require('../entities/pipe');
+
 var GraphicsSystem = function(entities) {
     this.entities = entities;
     // Canvas is where we draw
@@ -330,6 +317,7 @@ GraphicsSystem.prototype.run = function() {
     // Run the render loop
     // window.requestAnimationFrame(this.tick.bind(this));
     window.setInterval(this.tick.bind(this), 1000 /60);
+    window.setInterval(this.add_pipes.bind(this), 2000);
 };
 
 GraphicsSystem.prototype.tick = function() {
@@ -375,8 +363,23 @@ GraphicsSystem.prototype.tick = function() {
     
 };
 
+GraphicsSystem.prototype.add_pipes = function() {
+    if(this.entities[0].components.physics.status == 'move'){
+        var random_range = function(min, max){
+            return Math.random()* (max-min) + min; 
+        };
+
+        var pipe_y = random_range(-0.5, 0); //randomly set the left_bottom cornor of pipe
+        var pipe_gap = random_range(0.03, 0.06);
+        pipe_gap += 0.85;
+        this.entities.push(new pipe.Pipe(pipe_y));
+        this.entities.push(new pipe.Pipe(pipe_y + pipe_gap)); // draw a pair of pipes
+    }
+};
+
+
 exports.GraphicsSystem = GraphicsSystem;
-},{}],12:[function(require,module,exports){
+},{"../entities/pipe":7}],12:[function(require,module,exports){
 var InputSystem = function(entities) {
     this.entities = entities;
 
@@ -514,7 +517,7 @@ StorageSystem.prototype.store_score = function() {
     }
 
     // show top scores
-    this.show_scores().bind(this);
+    this.show_scores();
 
 };
 
