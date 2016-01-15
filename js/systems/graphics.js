@@ -9,7 +9,8 @@ var GraphicsSystem = function(entities) {
 
 GraphicsSystem.prototype.run = function() {
     // Run the render loop
-    window.requestAnimationFrame(this.tick.bind(this));
+    // window.requestAnimationFrame(this.tick.bind(this));
+    window.setInterval(this.tick.bind(this), 1000 /60);
 };
 
 GraphicsSystem.prototype.tick = function() {
@@ -51,7 +52,7 @@ GraphicsSystem.prototype.tick = function() {
     }    
 
     // Continue the render loop
-    window.requestAnimationFrame(this.tick.bind(this));
+    // window.requestAnimationFrame(this.tick.bind(this));
     
 };
 
