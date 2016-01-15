@@ -35,25 +35,27 @@ StorageSystem.prototype.store_score = function() {
         scores_array.onsuccess = function(e) {
             var result = e.target.result;
 
-            if(result == undefined){ // if not score_array, create one
-                var tmp = [current_score];
-                var request =  transaction.add(tmp ,'scores');
-                request.onsuccess = function(e) {} 
-                return;      
+            if(result == undefined){ // if no previous scores, create one
+                result = [current_score];
+                var request =  transaction.add(result ,'scores');
+                request.onsuccess = function(e) {
+                    self.show_scores(result);
+                }     
+                return;
             }
-           
+
+            // if previous scores exist, insert current score
             var insert_idx = 0;
             for(var i= 0 ; i < result.length; i++){
                 if(result[i] >= current_score){
                     insert_idx++;
                 }
             }
-
+            
             result.splice(insert_idx, 0, current_score);
             result.length = 5;
-            updated_scores = result;
             transaction.put(result,'scores');
-            self.show_scores(updated_scores);
+            self.show_scores(result);
         }
     }
 };

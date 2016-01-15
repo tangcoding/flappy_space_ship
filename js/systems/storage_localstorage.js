@@ -5,7 +5,7 @@ var StorageSystem = function(entities) {
 StorageSystem.prototype.support_local_storage = function() {
   try {
     return 'localStorage' in window && window['localStorage'] !== null;
-  } catch (e) {
+  } catch (error) {
     return false;
   }
 };

@@ -1,5 +1,5 @@
-var storageSystem = require("./storage_indexdb");
-// var storageSystem = require("./storage_localstorage");
+// var storageSystem = require("./storage_indexdb");
+var storageSystem = require("./storage_localstorage");
 
 var CollisionSystem = function(entities) {
     this.entities = entities;

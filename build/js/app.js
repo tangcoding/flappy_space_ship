@@ -253,8 +253,8 @@ document.addEventListener('DOMContentLoaded', function() {
 // });
 
 },{"./flappy_bird":8}],10:[function(require,module,exports){
-var storageSystem = require("./storage_indexdb");
-// var storageSystem = require("./storage_localstorage");
+// var storageSystem = require("./storage_indexdb");
+var storageSystem = require("./storage_localstorage");
 
 var CollisionSystem = function(entities) {
     this.entities = entities;
@@ -316,7 +316,7 @@ CollisionSystem.prototype.tick = function() {
 
 
 exports.CollisionSystem = CollisionSystem;
-},{"./storage_indexdb":14}],11:[function(require,module,exports){
+},{"./storage_localstorage":14}],11:[function(require,module,exports){
 var GraphicsSystem = function(entities) {
     this.entities = entities;
     // Canvas is where we draw
@@ -478,73 +478,59 @@ var StorageSystem = function(entities) {
     this.entities = entities;
 };
 
-StorageSystem.prototype.support_indexdb = function() {
-  if("indexedDB" in window) {return true;}
-  else{return false;}
+StorageSystem.prototype.support_local_storage = function() {
+  try {
+    return 'localStorage' in window && window['localStorage'] !== null;
+  } catch (error) {
+    return false;
+  }
 };
 
 StorageSystem.prototype.store_score = function() {
-    var db, updated_scores;
-    var self = this;
+
+    if(!this.support_local_storage){return false;}
+
     var current_score = this.entities[0].components.physics.score;
+    var tmp_array = [ 0, 0, 0, 0, 0]; //tmp array for top 5 scores
 
-    if(!this.support_indexdb){return false;}
-
-
-    var openRequest = indexedDB.open("fss",1);
-
-    openRequest.onupgradeneeded = function(e) {
-        // console.log("running onupgradeneeded");
-        var thisDB = e.target.result;
-
-        if(!thisDB.objectStoreNames.contains("top_scores")) {
-            thisDB.createObjectStore("top_scores");
+    //copy all top scores to tmp array and find insert index of current score
+    var insert_idx = 0;
+    for(var i= 0; i <5; i++){
+        if(localStorage["flappy_space_ship.score." + i ] != null){
+            tmp_array[i] = localStorage["flappy_space_ship.score." + i ];
+            if(localStorage["flappy_space_ship.score." + i ] > current_score){
+                insert_idx++;
+            }
         }
     }
 
-    openRequest.onsuccess = function(e) {
-        // console.log("Success!");
-        db = e.target.result;
-        var transaction = db.transaction(["top_scores"],"readwrite").objectStore("top_scores");
-        var scores_array = transaction.get('scores');
-
-        scores_array.onsuccess = function(e) {
-            var result = e.target.result;
-
-            if(result == undefined){ // if not score_array, create one
-                var tmp = [current_score];
-                var request =  transaction.add(tmp ,'scores');
-                request.onsuccess = function(e) {} 
-                return;      
-            }
-           
-            var insert_idx = 0;
-            for(var i= 0 ; i < result.length; i++){
-                if(result[i] >= current_score){
-                    insert_idx++;
-                }
-            }
-
-            result.splice(insert_idx, 0, current_score);
-            result.length = 5;
-            updated_scores = result;
-            transaction.put(result,'scores');
-            self.show_scores(updated_scores);
+    // insert current score
+    if(insert_idx < 5){
+        localStorage["flappy_space_ship.score." + insert_idx ] = current_score;
+        for(var i = insert_idx+1; i < 5; i++){
+            localStorage["flappy_space_ship.score." + i ] = tmp_array[i-1];
         }
     }
+
+    // show top scores
+    this.show_scores().bind(this);
+
 };
 
-StorageSystem.prototype.show_scores = function(score_array) {
+StorageSystem.prototype.show_scores = function() {
+
+    if(!this.support_local_storage){return false;}
 
     var top_scores= document.getElementById('top_scores');
     top_scores.style.display='block';
     top_scores.innerHTML = '<h3>Top Scores</h3><hr>';
 
-    for(var i= 0; i <score_array.length; i++){
-        if(score_array[i]==0) return;
-        var text_node = document.createElement("h3");
-        text_node.innerHTML = '#' + (i+1) + '.&nbsp;&nbsp;&nbsp;' +score_array[i];
-        top_scores.appendChild(text_node);
+    for(var i= 0; i <5; i++){
+        if(localStorage["flappy_space_ship.score." + i ] != null && localStorage["flappy_space_ship.score." + i ] != 0){
+            var text_node = document.createElement("h3");
+            text_node.innerHTML = '#' + (i+1) + '.&nbsp;&nbsp;&nbsp;' +localStorage["flappy_space_ship.score." + i ];
+            top_scores.appendChild(text_node);
+        }
     }
 
 };
