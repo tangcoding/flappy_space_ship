@@ -1,9 +1,9 @@
 var PhysicsComponent = function(entity) {
     this.entity = entity;
-    this.name = "pipe";
+    this.name = "star";
     this.type = 'circle';
-    this.pass = false;
-    this.radius = 0.5;
+    this.pick = false;
+    this.radius = 0.01;
 
     // this.size= {
     //     x: 0.1,

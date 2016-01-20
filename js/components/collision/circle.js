@@ -31,6 +31,7 @@ CircleCollisionComponent.prototype.collideCircle = function(entity) {
 };
 
 CircleCollisionComponent.prototype.collideRect = function(entity) {
+
     var clamp = function(value, low, high) {
         if (value < low) {
             return low;

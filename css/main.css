@@ -9,10 +9,19 @@ html, body {
 #main-canvas {
     width: 100%;
     height: 100%;
-    background: url('../img/space.jpg');
+/*    background: url('../img/space.jpg');
     background-size: cover;
-    background-repeat: no-repeat;
+    background-repeat: no-repeat;*/
     z-index: 90;
+	background-color:#104E8B;
+	background-image:
+	radial-gradient(white, rgba(255,255,255,.2) 1px, transparent 5px),
+	radial-gradient(white, rgba(255,255,255,.15) 1px, transparent 5px),
+	radial-gradient(white, rgba(255,255,255,.1) 1px, transparent 5px),
+	radial-gradient(rgba(255,255,255,.4), rgba(255,255,255,.1) 2px, transparent 10px),
+	radial-gradient(rgba(255,255,255,.4), rgba(255,255,255,.1) 2px, transparent 10px);
+	background-size: 550px 550px, 350px 300px, 200px 250px, 250px 250px, 350px 250px; 
+	background-position: 0 0, 40px 60px, 130px 220px, 70px 300px, 20px 80px;
 }
 
 .info_page{
@@ -32,7 +41,23 @@ html, body {
 }
 
 #intro h1{
-	margin-top: 100px;
+	margin-top: 30px;
+}
+
+.level{
+	display: inline-block;
+	margin: 0 8px;
+	vertical-align: top;
+}
+
+.level_btn{
+	border: 3px solid #aaa;
+	background: #ccc;
+}
+
+.level_btn_active{
+	border: 3px solid #0288D1;
+	background: #03A9F4;
 }
 
 #result, #top_scores{
@@ -61,7 +86,7 @@ button{
 
 #score_board{
 	position: absolute;
-	top:0;
+	bottom:0;
 	left: 0;
 	width: 220px;
 	padding: 10px;

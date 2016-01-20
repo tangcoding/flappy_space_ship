@@ -1,4 +1,71 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+var CircleCollisionComponent = function(entity, radius) {
+    this.entity = entity;
+    this.radius = radius;
+    this.type = 'circle';
+};
+
+CircleCollisionComponent.prototype.collidesWith = function(entity) {
+    if (entity.components.collision.type == 'circle') {
+        return this.collideCircle(entity);
+    }
+    else if (entity.components.collision.type == 'rect') {
+        return this.collideRect(entity);
+    }
+    return false;
+};
+
+CircleCollisionComponent.prototype.collideCircle = function(entity) {
+    var positionA = this.entity.components.physics.position;
+    var positionB = entity.components.physics.position;
+
+    var radiusA = this.radius;
+    var radiusB = entity.components.collision.radius;
+
+    var diff = {x: positionA.x - positionB.x,
+                y: positionA.y - positionB.y};
+
+    var distanceSquared = diff.x * diff.x + diff.y * diff.y;
+    var radiusSum = radiusA + radiusB;
+
+    return distanceSquared < radiusSum * radiusSum;
+};
+
+CircleCollisionComponent.prototype.collideRect = function(entity) {
+
+    var clamp = function(value, low, high) {
+        if (value < low) {
+            return low;
+        }
+        if (value > high) {
+            return high;
+        }
+        return value;
+    };
+
+    var positionA = this.entity.components.physics.position;
+    var positionB = entity.components.physics.position;
+    var sizeB = entity.components.collision.size;
+
+    var closest = {
+        x: clamp(positionA.x, positionB.x ,
+                 positionB.x + sizeB.x ),
+        y: clamp(positionA.y, positionB.y ,
+                 positionB.y + sizeB.y )
+    };
+
+
+    var radiusA = this.radius;
+
+    var diff = {x: positionA.x - closest.x,
+                y: positionA.y - closest.y};
+
+    var distanceSquared = diff.x * diff.x + diff.y * diff.y;
+    return distanceSquared < radiusA * radiusA;
+};
+
+exports.CircleCollisionComponent = CircleCollisionComponent;
+},{}],2:[function(require,module,exports){
 var RectCollisionComponent = function(entity, size) {
     this.entity = entity;
     this.size = size;
@@ -41,7 +108,7 @@ RectCollisionComponent.prototype.collideRect = function(entity) {
 };
 
 exports.RectCollisionComponent = RectCollisionComponent;
-},{}],2:[function(require,module,exports){
+},{}],3:[function(require,module,exports){
 var BirdGraphicsComponent = function(entity) {
     this.entity = entity;
 };
@@ -58,7 +125,7 @@ BirdGraphicsComponent.prototype.draw = function(context) {
 };
 
 exports.BirdGraphicsComponent = BirdGraphicsComponent;
-},{}],3:[function(require,module,exports){
+},{}],4:[function(require,module,exports){
 var PipeGraphicsComponent = function(entity) {
     this.entity = entity;
 };
@@ -66,24 +133,54 @@ var PipeGraphicsComponent = function(entity) {
 PipeGraphicsComponent.prototype.draw = function(context) {
 
 	 var position = this.entity.components.physics.position;
-	 var size = this.entity.components.physics.size;
+	 // var size = this.entity.components.physics.size;
+     var radius = this.entity.components.physics.radius;
 	 // console.log(position.y );
 
 	context.save();
     var img = document.getElementById("rock");
-    context.drawImage( img, position.x , position.y , size.x, size.y);
-    // context.fillStyle ="green";
-    // context.fillRect(position.x , position.y , size.x, size.y);
+    // context.fillStyle = "green";
+    // context.beginPath();
+    // context.arc( position.x, position.y , radius, 0, 2*Math.PI);
+    // context.fill();
+    // context.closePath();
+    context.drawImage( img, position.x -radius, position.y -radius, 2*radius, 2*radius);
+    // context.drawImage( img, position.x , position.y , size.x, size.y);
     context.restore();
 };
 
 exports.PipeGraphicsComponent = PipeGraphicsComponent;
-},{}],4:[function(require,module,exports){
+},{}],5:[function(require,module,exports){
+var StarGraphicsComponent = function(entity) {
+    this.entity = entity;
+};
+
+StarGraphicsComponent.prototype.draw = function(context) {
+
+	 var position = this.entity.components.physics.position;
+     var radius = this.entity.components.physics.radius;
+
+	context.save();
+    var img = document.getElementById("star");
+    // context.fillStyle = "green";
+    // context.beginPath();
+    // context.arc( position.x, position.y , radius, 0, 2*Math.PI);
+    // context.fill();
+    // context.closePath();
+    context.drawImage( img, position.x -radius, position.y -radius, 2*radius, 2*radius);
+    // context.drawImage( img, position.x , position.y , size.x, size.y);
+    context.restore();
+};
+
+exports.StarGraphicsComponent = StarGraphicsComponent;
+},{}],6:[function(require,module,exports){
 var PhysicsComponent = function(entity) {
     this.entity = entity;
     this.type = "rect";
     this.status = 'still';
-    this.score = 0;
+    this.level = 1;
+    this.total_level = 3;
+    this.pass_pipe_num = 0;
 
     this.size= {
         x: 0.07,
@@ -114,16 +211,18 @@ PhysicsComponent.prototype.update = function(delta) {
 };
 
 exports.PhysicsComponent = PhysicsComponent;
-},{}],5:[function(require,module,exports){
+},{}],7:[function(require,module,exports){
 var PhysicsComponent = function(entity) {
     this.entity = entity;
-    this.type = 'rect';
+    this.name = "pipe";
+    this.type = 'circle';
     this.pass = false;
+    this.radius = 0.5;
 
-    this.size= {
-        x: 0.1,
-        y: 0.6
-    };
+    // this.size= {
+    //     x: 0.1,
+    //     y: 0.6
+    // };
 
     this.position = {
         x: 0.5 ,
@@ -143,7 +242,38 @@ PhysicsComponent.prototype.update = function(delta) {
 };
 
 exports.PhysicsComponent = PhysicsComponent;
-},{}],6:[function(require,module,exports){
+},{}],8:[function(require,module,exports){
+var PhysicsComponent = function(entity) {
+    this.entity = entity;
+    this.name = "star";
+    this.type = 'circle';
+    this.pick = false;
+    this.radius = 0.01;
+
+    // this.size= {
+    //     x: 0.1,
+    //     y: 0.6
+    // };
+
+    this.position = {
+        x: 0.5 ,
+        y: 0 
+    };
+    this.velocity = {
+        x: -0.22,
+        y: 0
+    };
+};
+
+PhysicsComponent.prototype.update = function(delta) {
+
+    this.position.x += this.velocity.x * delta;
+    // this.position.y += this.velocity.y * delta;
+    // console.log("x: "+ this.position.x + "; y: " + this.position.y);
+};
+
+exports.PhysicsComponent = PhysicsComponent;
+},{}],9:[function(require,module,exports){
 var graphicsComponent = require("../components/graphics/bird");
 var physicsComponent = require("../components/physics/bird_physics");
 var collisionComponent = require("../components/collision/rect");
@@ -175,18 +305,21 @@ Bird.prototype.onCollision = function(entity) {
 };
 
 exports.Bird = Bird;
-},{"../components/collision/rect":1,"../components/graphics/bird":2,"../components/physics/bird_physics":4}],7:[function(require,module,exports){
+},{"../components/collision/rect":2,"../components/graphics/bird":3,"../components/physics/bird_physics":6}],10:[function(require,module,exports){
 var graphicsComponent = require("../components/graphics/pipe");
 var physicsComponent = require("../components/physics/pipe_physics");
-var collisionComponent = require("../components/collision/rect");
+var collisionComponent = require("../components/collision/circle");
 
 
-var Pipe = function( pipe_y) {
+var Pipe = function( pipe_y, pipe_size) {
     var physics = new physicsComponent.PhysicsComponent(this);
     physics.position.y = pipe_y ;
+    // physics.size.x = pipe_size;
+    // physics.size.y = pipe_size;
+    physics.radius = pipe_size;
 
     var graphics = new graphicsComponent.PipeGraphicsComponent(this);
-    var collision = new collisionComponent.RectCollisionComponent(this, physics.size);
+    var collision = new collisionComponent.CircleCollisionComponent(this, physics.radius);
     
     this.components = {
         physics: physics,
@@ -197,7 +330,30 @@ var Pipe = function( pipe_y) {
 };
 
 exports.Pipe = Pipe;
-},{"../components/collision/rect":1,"../components/graphics/pipe":3,"../components/physics/pipe_physics":5}],8:[function(require,module,exports){
+},{"../components/collision/circle":1,"../components/graphics/pipe":4,"../components/physics/pipe_physics":7}],11:[function(require,module,exports){
+var graphicsComponent = require("../components/graphics/star");
+var physicsComponent = require("../components/physics/star_physics");
+var collisionComponent = require("../components/collision/circle");
+
+
+var Star = function( star_y) {
+    var physics = new physicsComponent.PhysicsComponent(this);
+    physics.position.y = star_y ;
+
+
+    var graphics = new graphicsComponent.StarGraphicsComponent(this);
+    var collision = new collisionComponent.CircleCollisionComponent(this, physics.radius);
+    
+    this.components = {
+        physics: physics,
+        graphics: graphics,
+        collision: collision
+    };
+
+};
+
+exports.Star = Star;
+},{"../components/collision/circle":1,"../components/graphics/star":5,"../components/physics/star_physics":8}],12:[function(require,module,exports){
 
 var graphicsSystem = require('./systems/graphics');
 var physicsSystem = require('./systems/physics');
@@ -222,7 +378,7 @@ FlappyBird.prototype.run = function() {
 
 
 exports.FlappyBird = FlappyBird;
-},{"./entities/bird":6,"./systems/graphics":11,"./systems/input":12,"./systems/physics":13}],9:[function(require,module,exports){
+},{"./entities/bird":9,"./systems/graphics":15,"./systems/input":16,"./systems/physics":17}],13:[function(require,module,exports){
 var flappyBird = require('./flappy_bird');
 
 document.addEventListener('DOMContentLoaded', function() {
@@ -237,7 +393,7 @@ document.addEventListener('DOMContentLoaded', function() {
 // 	    app.run();
 // });
 
-},{"./flappy_bird":8}],10:[function(require,module,exports){
+},{"./flappy_bird":12}],14:[function(require,module,exports){
 // var storageSystem = require("./storage_indexdb");
 var storageSystem = require("./storage_localstorage");
 
@@ -255,6 +411,7 @@ CollisionSystem.prototype.tick = function() {
         this.end_game = true;
     }
 
+    var del_idx = null;
 
     for (var i=1; i<this.entities.length; i++) {
         if(this.end_game) break;
@@ -266,22 +423,39 @@ CollisionSystem.prototype.tick = function() {
 
         if (!entityA.components.collision.collidesWith(entityB)) {
             // add score if passing a pipe
-            if(!entityB.components.physics.pass&& entityB.components.physics.position.x + entityB.components.physics.size.x < entityA.components.physics.position.x){
-                entityA.components.physics.score += 50;
+            if(entityB.components.physics.name == 'pipe' && !entityB.components.physics.pass&& entityB.components.physics.position.x + entityB.components.physics.radius < entityA.components.physics.position.x){
+                // entityA.components.physics.score += 50;
                 entityB.components.physics.pass = true;
-                document.getElementById('score').innerHTML = entityA.components.physics.score;
-                document.getElementById('final_score').innerHTML = entityA.components.physics.score;
+                entityA.components.physics.pass_pipe_num += 1;
+
+                if(entityA.components.physics.pass_pipe_num >= 18){
+                    this.end_game = true;
+                    break;
+                }
             }
             continue;
         }
-        
-        this.end_game = true;
+        else{
+            if(entityB.components.physics.name == 'pipe'){ //collide with pipes
+                // this.end_game = true;
+            }
+            else if(entityB.components.physics.name == 'star' && !entityB.components.physics.pick){
+                entityB.components.physics.pick = true;
+                del_idx = i;
+                document.getElementById('score').innerHTML += '&star;';
+                document.getElementById('final_score').innerHTML  += '&star;';
+            }
+        }
 
-        // if (entityA.components.collision.onCollision) {
-        //     // entityA.components.collision.onCollision(entityB);
-        //     this.end_game = true;
+        if (entityA.components.collision.onCollision) {
+            // entityA.components.collision.onCollision(entityB);
+            this.end_game = true;
 
-        // }
+        }
+    }
+    // delete star that is picked
+    if(del_idx != null){
+        this.entities.splice(del_idx,1);
     }
  
     if(this.end_game){  // if game end
@@ -292,17 +466,30 @@ CollisionSystem.prototype.tick = function() {
         entityA.components.physics.position.x = 0; //reset position
         entityA.components.physics.position.y = 0.5; 
 
-        // console.log(this.entities);
+        var level_id = 'l' + entityA.components.physics.level + '_star'; // update stars in intro page
+        document.getElementById(level_id).innerHTML  = document.getElementById('final_score').innerHTML;
+        if(entityA.components.physics.pass_pipe_num < 18){
+            document.getElementById('result_text').innerHTML='Level Failed';
+        }
+        else{
+            document.getElementById('result_text').innerHTML='Level Complete';
+            var lbtn_id = 'lbtn_' + (entityA.components.physics.level +1);
+            document.getElementById(lbtn_id).className  += 'level_btn_active';
+
+            entityA.components.physics.level +=1; // level up
+        }
+
         document.getElementById('result').style.display='block';
         document.getElementById('score_board').style.display = 'none';
-        this.storageSystem.store_score();
+        // this.storageSystem.store_score();
     }
 };
 
 
 exports.CollisionSystem = CollisionSystem;
-},{"./storage_localstorage":14}],11:[function(require,module,exports){
+},{"./storage_localstorage":18}],15:[function(require,module,exports){
 var pipe = require('../entities/pipe');
+var star = require('../entities/star');
 
 var GraphicsSystem = function(entities) {
     this.entities = entities;
@@ -311,13 +498,14 @@ var GraphicsSystem = function(entities) {
     // Context is what we draw to
     this.context = this.canvas.getContext('2d');
     this.anim = false;
+    this.pipe_num = 0;
 };
 
 GraphicsSystem.prototype.run = function() {
     // Run the render loop
     // window.requestAnimationFrame(this.tick.bind(this));
     window.setInterval(this.tick.bind(this), 1000 /60);
-    window.setInterval(this.add_pipes.bind(this), 2000);
+    window.setInterval(this.add_pipes_star.bind(this), 2000);
 };
 
 GraphicsSystem.prototype.tick = function() {
@@ -363,23 +551,40 @@ GraphicsSystem.prototype.tick = function() {
     
 };
 
-GraphicsSystem.prototype.add_pipes = function() {
+GraphicsSystem.prototype.add_pipes_star = function() {
+    var level = this.entities[0].components.physics.level;
+    var total = this.entities[0].components.physics.total_level;
+
     if(this.entities[0].components.physics.status == 'move'){
         var random_range = function(min, max){
             return Math.random()* (max-min) + min; 
         };
 
-        var pipe_y = random_range(-0.5, 0); //randomly set the left_bottom cornor of pipe
+        var pipe_y = random_range(0, 0.3 + level*0.05); //randomly set the left_bottom cornor of pipe
+        var pipe_size1 = random_range(0.05, 0.1); // random pipe_size
         var pipe_gap = random_range(0.03, 0.06);
-        pipe_gap += 0.85;
-        this.entities.push(new pipe.Pipe(pipe_y));
-        this.entities.push(new pipe.Pipe(pipe_y + pipe_gap)); // draw a pair of pipes
+
+        pipe_gap += pipe_size1 + 0.25 + (total - level)*0.05;
+        var pipe_size2 = random_range(0.05, 0.15);
+        this.entities.push(new pipe.Pipe(pipe_y, pipe_size1));
+        this.entities.push(new pipe.Pipe(pipe_y + pipe_gap, pipe_size2)); // draw a pair of pipes
+
+        this.pipe_num += 1;
+
+        if(this.pipe_num%3 == 0){
+            var adj = 0.02+ (total - level)*0.01;
+            var star_y_min = pipe_y+ pipe_size1 + adj;
+            // var star_y_max = pipe_y + pipe_gap - pipe_size2 - adj;
+            var star_y = random_range(star_y_min, star_y_min + adj); // random star in the gap region
+            this.entities.push(new star.Star(star_y));
+        }
+    
     }
 };
 
 
 exports.GraphicsSystem = GraphicsSystem;
-},{"../entities/pipe":7}],12:[function(require,module,exports){
+},{"../entities/pipe":10,"../entities/star":11}],16:[function(require,module,exports){
 var InputSystem = function(entities) {
     this.entities = entities;
 
@@ -388,15 +593,18 @@ var InputSystem = function(entities) {
     this.start_btn =  document.getElementById('start');
     this.new_game_btn =  document.getElementById('new_game');
     this.pause_btn =  document.getElementById('pause');
+    this.level_btn = document.getElementById('level_wrap');
 };
 
 InputSystem.prototype.run = function() {
+    window.addEventListener('load', this.windowLoad.bind(this));
+    window.addEventListener('blur', this.windowBlur.bind(this));
     this.canvas.addEventListener('click', this.onClick.bind(this));
-    this.pause_btn.addEventListener("click", this.pauseGame.bind(this));
     // this.canvas.addEventListener('touchstart', this.onTouch.bind(this));
 
-    this.start_btn.addEventListener('click', this.onGameStart.bind(this) );
+    this.pause_btn.addEventListener("click", this.pauseGame.bind(this));
     this.new_game_btn.addEventListener('click', this.newGame.bind(this) );
+    this.level_btn.addEventListener('click', this.chooseLevel.bind(this) );
 };
 
 InputSystem.prototype.onClick = function() {
@@ -412,16 +620,16 @@ InputSystem.prototype.onTouch = function() {
 };
 
 InputSystem.prototype.onGameStart = function() {
-    // console.log("start");
     document.getElementById('intro').style.display = 'none';
     var bird = this.entities[0];
-    bird.components.physics.score = 0; //reset score
-    document.getElementById('score').innerHTML = 0;
-    document.getElementById('final_score').innerHTML = 0;
+    document.getElementById('score').innerHTML = ''; //reset stars
+    document.getElementById('final_score').innerHTML = '';
+    document.getElementById('level').innerHTML = bird.components.physics.level;
     bird.components.physics.position.x = 0; //reset position
     bird.components.physics.position.y = 0.5; 
     bird.components.physics.velocity.x = 0.02; //reset velocity
     bird.components.physics.velocity.y = 0; 
+    bird.components.physics.pass_pipe_num = 0;
 
     window.setTimeout(function(){bird.components.physics.status = 'move';}, 200);   
 
@@ -447,8 +655,41 @@ InputSystem.prototype.pauseGame = function() {
     }
 };
 
+InputSystem.prototype.windowBlur = function() {
+    // console.log('pause');
+    var bird = this.entities[0];
+    if(bird.components.physics.status == 'move'){
+        this.pauseGame();
+    }
+};
+
+InputSystem.prototype.chooseLevel = function() {
+    var e = window.event;
+    var target = event.target || event.srcElement;
+    var click_level = parseInt(target.innerHTML);
+    console.log(click_level);
+    console.log(typeof(click_level));
+    var bird = this.entities[0];
+    if(click_level <= bird.components.physics.level){
+        bird.components.physics.level = click_level;
+        this.onGameStart();
+    }
+};
+
+InputSystem.prototype.windowLoad = function() {
+    var level_wrap = document.getElementById('level_wrap');
+    var total = this.entities[0].components.physics.total_level;
+    for(var i = 1; i <= total; i++){
+        var text_node = document.createElement("div");
+        text_node.className += " level";
+        text_node.innerHTML = '<button class="level_btn" id="lbtn_' + i +'">' + i + '</button><p id="l' + i + '_star"></p>';
+        level_wrap.appendChild(text_node);
+    }
+    document.getElementById('lbtn_1').className  += 'level_btn_active';
+};
+
 exports.InputSystem = InputSystem;
-},{}],13:[function(require,module,exports){
+},{}],17:[function(require,module,exports){
 var collisionSystem = require("./collision");
 
 var PhysicsSystem = function(entities) {
@@ -477,7 +718,7 @@ PhysicsSystem.prototype.tick = function() {
 };
 
 exports.PhysicsSystem = PhysicsSystem;
-},{"./collision":10}],14:[function(require,module,exports){
+},{"./collision":14}],18:[function(require,module,exports){
 var StorageSystem = function(entities) {
     this.entities = entities;
 };
@@ -542,4 +783,4 @@ StorageSystem.prototype.show_scores = function() {
 
 
 exports.StorageSystem = StorageSystem;
-},{}]},{},[9]);
+},{}]},{},[13]);

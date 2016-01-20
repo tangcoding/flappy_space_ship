@@ -1,4 +1,5 @@
 var pipe = require('../entities/pipe');
+var star = require('../entities/star');
 
 var GraphicsSystem = function(entities) {
     this.entities = entities;
@@ -7,13 +8,14 @@ var GraphicsSystem = function(entities) {
     // Context is what we draw to
     this.context = this.canvas.getContext('2d');
     this.anim = false;
+    this.pipe_num = 0;
 };
 
 GraphicsSystem.prototype.run = function() {
     // Run the render loop
     // window.requestAnimationFrame(this.tick.bind(this));
     window.setInterval(this.tick.bind(this), 1000 /60);
-    window.setInterval(this.add_pipes.bind(this), 2000);
+    window.setInterval(this.add_pipes_star.bind(this), 2000);
 };
 
 GraphicsSystem.prototype.tick = function() {
@@ -59,17 +61,34 @@ GraphicsSystem.prototype.tick = function() {
     
 };
 
-GraphicsSystem.prototype.add_pipes = function() {
+GraphicsSystem.prototype.add_pipes_star = function() {
+    var level = this.entities[0].components.physics.level;
+    var total = this.entities[0].components.physics.total_level;
+
     if(this.entities[0].components.physics.status == 'move'){
         var random_range = function(min, max){
             return Math.random()* (max-min) + min; 
         };
 
-        var pipe_y = random_range(-0.5, 0); //randomly set the left_bottom cornor of pipe
+        var pipe_y = random_range(0, 0.3 + level*0.05); //randomly set the left_bottom cornor of pipe
+        var pipe_size1 = random_range(0.05, 0.1); // random pipe_size
         var pipe_gap = random_range(0.03, 0.06);
-        pipe_gap += 0.85;
-        this.entities.push(new pipe.Pipe(pipe_y));
-        this.entities.push(new pipe.Pipe(pipe_y + pipe_gap)); // draw a pair of pipes
+
+        pipe_gap += pipe_size1 + 0.25 + (total - level)*0.05;
+        var pipe_size2 = random_range(0.05, 0.15);
+        this.entities.push(new pipe.Pipe(pipe_y, pipe_size1));
+        this.entities.push(new pipe.Pipe(pipe_y + pipe_gap, pipe_size2)); // draw a pair of pipes
+
+        this.pipe_num += 1;
+
+        if(this.pipe_num%3 == 0){
+            var adj = 0.02+ (total - level)*0.01;
+            var star_y_min = pipe_y+ pipe_size1 + adj;
+            // var star_y_max = pipe_y + pipe_gap - pipe_size2 - adj;
+            var star_y = random_range(star_y_min, star_y_min + adj); // random star in the gap region
+            this.entities.push(new star.Star(star_y));
+        }
+    
     }
 };
 

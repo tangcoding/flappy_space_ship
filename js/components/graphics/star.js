@@ -1,16 +1,14 @@
-var PipeGraphicsComponent = function(entity) {
+var StarGraphicsComponent = function(entity) {
     this.entity = entity;
 };
 
-PipeGraphicsComponent.prototype.draw = function(context) {
+StarGraphicsComponent.prototype.draw = function(context) {
 
 	 var position = this.entity.components.physics.position;
-	 // var size = this.entity.components.physics.size;
      var radius = this.entity.components.physics.radius;
-	 // console.log(position.y );
 
 	context.save();
-    var img = document.getElementById("rock");
+    var img = document.getElementById("star");
     // context.fillStyle = "green";
     // context.beginPath();
     // context.arc( position.x, position.y , radius, 0, 2*Math.PI);
@@ -21,4 +19,4 @@ PipeGraphicsComponent.prototype.draw = function(context) {
     context.restore();
 };
 
-exports.PipeGraphicsComponent = PipeGraphicsComponent;
+exports.StarGraphicsComponent = StarGraphicsComponent;

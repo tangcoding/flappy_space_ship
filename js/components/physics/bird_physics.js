@@ -2,7 +2,9 @@ var PhysicsComponent = function(entity) {
     this.entity = entity;
     this.type = "rect";
     this.status = 'still';
-    this.score = 0;
+    this.level = 1;
+    this.total_level = 3;
+    this.pass_pipe_num = 0;
 
     this.size= {
         x: 0.07,
