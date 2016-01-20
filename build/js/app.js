@@ -437,7 +437,7 @@ CollisionSystem.prototype.tick = function() {
         }
         else{
             if(entityB.components.physics.name == 'pipe'){ //collide with pipes
-                // this.end_game = true;
+                this.end_game = true;
             }
             else if(entityB.components.physics.name == 'star' && !entityB.components.physics.pick){
                 entityB.components.physics.pick = true;
@@ -447,11 +447,10 @@ CollisionSystem.prototype.tick = function() {
             }
         }
 
-        if (entityA.components.collision.onCollision) {
-            // entityA.components.collision.onCollision(entityB);
-            this.end_game = true;
-
-        }
+        // if (entityA.components.collision.onCollision) {
+        //     // entityA.components.collision.onCollision(entityB);
+        //     this.end_game = true;
+        // }
     }
     // delete star that is picked
     if(del_idx != null){
