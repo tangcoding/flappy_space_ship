@@ -3,8 +3,10 @@ var PhysicsComponent = function(entity) {
     this.type = "rect";
     this.status = 'still';
     this.level = 1;
-    this.total_level = 3;
+    this.max_level = 1;
     this.pass_pipe_num = 0;
+    this.rest_pipe_num = false;
+    this.base = 0;
 
     this.size= {
         x: 0.07,

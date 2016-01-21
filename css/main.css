@@ -9,9 +9,6 @@ html, body {
 #main-canvas {
     width: 100%;
     height: 100%;
-/*    background: url('../img/space.jpg');
-    background-size: cover;
-    background-repeat: no-repeat;*/
     z-index: 90;
 	background-color:#104E8B;
 	background-image:
@@ -44,20 +41,51 @@ html, body {
 	margin-top: 30px;
 }
 
-.level{
-	display: inline-block;
-	margin: 0 8px;
-	vertical-align: top;
+#level_wrap{
+ width: 200px;
+ margin: 10px auto;
+}
+
+button{
+	outline: none;
+}
+
+.ctrl_btn, .level_btn, .page_btn{
+	color: #fff;
+	font-size: 1.2rem;
+	background: #03A9F4;
+	border: 3px solid #0288D1; 
+	border-radius: 10px;
+	padding: 5px;
+	font-family: sans-serif;
+	margin: 3px auto;
 }
 
 .level_btn{
-	border: 3px solid #aaa;
+	width: 50px; 
+	height: 50px; 
+	border: 3px solid #aaa; 
 	background: #ccc;
+	display: inline-block;
+	margin: 2px 8px;
+	vertical-align: top;
 }
 
 .level_btn_active{
 	border: 3px solid #0288D1;
 	background: #03A9F4;
+}
+
+.ltext, .star_text {margin: 0 auto; font-size: 12px;}
+.ltext{font-size: 18px; }
+
+.page_btn{
+	margin-right: 8px;
+	margin-left: 8px;
+	font-size: 18px;
+	font-weight: bolder;
+	background: #FFC107;
+	border: 3px solid #FFC107;
 }
 
 #result, #top_scores{
@@ -73,24 +101,13 @@ html, body {
 	background: steelblue;
 }
 
-button{
-	color: #fff;
-	font-size: 1.2rem;
-	background: #03A9F4;
-	border: 3px solid #0288D1; 
-	border-radius: 10px;
-	padding: 8px;
-	font-family: sans-serif;
-	outline: none;
-}
-
 #score_board{
 	position: absolute;
 	bottom:0;
 	left: 0;
 	width: 220px;
 	padding: 10px;
-	font-size: 0.75rem;
+	font-size: 1rem;
 	color: #fff;
 	display: none;
 	font-family: sans-serif;
@@ -109,5 +126,10 @@ button{
 	.info_page h1{font-size: 1.1rem;}
 	.info_page h3{font-size: 0.7rem;}
 	#top_scores{width: 90%;}
-	button{font-size: 0.7rem;}
+	#score_board{font-size: 0.75rem;}
+	.ctrl_btn, .level_btn{font-size: 0.7rem;}
+	#level_wrap{width: 180px;}
+	.level_btn{width: 35px; height: 35px; padding: 3px;}
+	.ltext{font-size: 12px;}
+	.star_text{font-size: 8px};
 }

@@ -27,7 +27,7 @@ CircleCollisionComponent.prototype.collideCircle = function(entity) {
     var distanceSquared = diff.x * diff.x + diff.y * diff.y;
     var radiusSum = radiusA + radiusB;
 
-    return distanceSquared < radiusSum * radiusSum;
+    return distanceSquared * 1.04 < radiusSum * radiusSum; // add adjust factor to make some margin for collision
 };
 
 CircleCollisionComponent.prototype.collideRect = function(entity) {
@@ -60,7 +60,7 @@ CircleCollisionComponent.prototype.collideRect = function(entity) {
                 y: positionA.y - closest.y};
 
     var distanceSquared = diff.x * diff.x + diff.y * diff.y;
-    return distanceSquared < radiusA * radiusA;
+    return distanceSquared * 1.04 < radiusA * radiusA;// add adjust factor to make some margin for collision
 };
 
 exports.CircleCollisionComponent = CircleCollisionComponent;

@@ -10,7 +10,20 @@ PipeGraphicsComponent.prototype.draw = function(context) {
 	 // console.log(position.y );
 
 	context.save();
-    var img = document.getElementById("rock");
+    //change rock figure as level changes
+    var level = document.getElementById("level").innerHTML;
+    level = parseInt(level);
+
+    if(level%3 == 1){
+        img = document.getElementById("rock1");
+    }
+    else if(level%3 == 2){
+        img = document.getElementById("rock2");
+    }
+    else{
+        img = document.getElementById("rock3");
+    } 
+
     // context.fillStyle = "green";
     // context.beginPath();
     // context.arc( position.x, position.y , radius, 0, 2*Math.PI);

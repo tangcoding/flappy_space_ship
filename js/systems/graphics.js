@@ -62,34 +62,37 @@ GraphicsSystem.prototype.tick = function() {
 };
 
 GraphicsSystem.prototype.add_pipes_star = function() {
-    var level = this.entities[0].components.physics.level;
-    var total = this.entities[0].components.physics.total_level;
+    var level = this.entities[0].components.physics.level%3;
+    var reset = this.entities[0].components.physics.reset_pipe_num;
 
-    if(this.entities[0].components.physics.status == 'move'){
+    if(reset){ this.pipe_num = 0; this.entities[0].components.physics.reset_pipe_num = false;}
+
+    if(this.entities[0].components.physics.status == 'move' && this.pipe_num <20){
+
         var random_range = function(min, max){
             return Math.random()* (max-min) + min; 
         };
 
-        var pipe_y = random_range(0, 0.3 + level*0.05); //randomly set the left_bottom cornor of pipe
-        var pipe_size1 = random_range(0.05, 0.1); // random pipe_size
+        var pipe_y = random_range(0, 0.35 + level*0.03); //randomly set the left_bottom cornor of pipe
+        var pipe_size1 = random_range(0.06, 0.16); // random pipe_size
         var pipe_gap = random_range(0.03, 0.06);
 
-        pipe_gap += pipe_size1 + 0.25 + (total - level)*0.05;
-        var pipe_size2 = random_range(0.05, 0.15);
+        pipe_gap += pipe_size1 + 0.35 +  level*0.02;
+        var pipe_size2 = random_range(0.06, 0.16);
         this.entities.push(new pipe.Pipe(pipe_y, pipe_size1));
         this.entities.push(new pipe.Pipe(pipe_y + pipe_gap, pipe_size2)); // draw a pair of pipes
 
-        this.pipe_num += 1;
+        this.pipe_num += 2;
+        // console.log(this.pipe_num);
 
         if(this.pipe_num%3 == 0){
-            var adj = 0.02+ (total - level)*0.01;
+            var adj = 0.02 +  level*0.01;
             var star_y_min = pipe_y+ pipe_size1 + adj;
-            // var star_y_max = pipe_y + pipe_gap - pipe_size2 - adj;
             var star_y = random_range(star_y_min, star_y_min + adj); // random star in the gap region
             this.entities.push(new star.Star(star_y));
         }
-    
     }
+
 };
 
 

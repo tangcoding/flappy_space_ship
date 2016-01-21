@@ -32,7 +32,7 @@ CollisionSystem.prototype.tick = function() {
                 entityB.components.physics.pass = true;
                 entityA.components.physics.pass_pipe_num += 1;
 
-                if(entityA.components.physics.pass_pipe_num >= 18){
+                if(entityA.components.physics.pass_pipe_num >= 20){
                     this.end_game = true;
                     break;
                 }
@@ -47,7 +47,7 @@ CollisionSystem.prototype.tick = function() {
                 entityB.components.physics.pick = true;
                 del_idx = i;
                 document.getElementById('score').innerHTML += '&star;';
-                document.getElementById('final_score').innerHTML  += '&star;';
+                // document.getElementById('final_score').innerHTML  += '&star;';
             }
         }
 
@@ -63,28 +63,36 @@ CollisionSystem.prototype.tick = function() {
  
     if(this.end_game){  // if game end
 
-        // console.log('end game');
         this.entities.length = 1;
         entityA.components.physics.status = "still";
+        entityA.components.physics.reset_pipe_num = true; // tell system to reset pipe_num
         entityA.components.physics.position.x = 0; //reset position
         entityA.components.physics.position.y = 0.5; 
 
-        var level_id = 'l' + entityA.components.physics.level + '_star'; // update stars in intro page
-        document.getElementById(level_id).innerHTML  = document.getElementById('final_score').innerHTML;
-        if(entityA.components.physics.pass_pipe_num < 18){
+        if(entityA.components.physics.pass_pipe_num < 20){
             document.getElementById('result_text').innerHTML='Level Failed';
+            document.getElementById('final_score').innerHTML = '';
         }
         else{
             document.getElementById('result_text').innerHTML='Level Complete';
-            var lbtn_id = 'lbtn_' + (entityA.components.physics.level +1);
-            document.getElementById(lbtn_id).className  += 'level_btn_active';
+            var lbtn_id = 'l' + entityA.components.physics.level + '_star'; // update stars in intro page
+            document.getElementById('final_score').innerHTML = document.getElementById('score').innerHTML;
+            var old_text = document.getElementById(lbtn_id).innerHTML; 
+            var new_text = document.getElementById('final_score').innerHTML;
+            if(new_text.length > old_text.length){ //update when get more stars
+                document.getElementById(lbtn_id).innerHTML = new_text; 
+            }
 
-            entityA.components.physics.level +=1; // level up
+            if(entityA.components.physics.level + 1> entityA.components.physics.max_level && entityA.components.physics.level + 1 <=9){
+                entityA.components.physics.max_level = entityA.components.physics.level + 1;
+                var lbtn_id = 'lbtn_' + entityA.components.physics.max_level ;
+                document.getElementById(lbtn_id).className  += ' level_btn_active';
+            }
         }
 
         document.getElementById('result').style.display='block';
         document.getElementById('score_board').style.display = 'none';
-        // this.storageSystem.store_score();
+        this.storageSystem.store_score();
     }
 };
 
