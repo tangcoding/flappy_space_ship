@@ -41,7 +41,7 @@ CollisionSystem.prototype.tick = function() {
         }
         else{
             if(entityB.components.physics.name == 'pipe'){ //collide with pipes
-                // this.end_game = true;
+                this.end_game = true;
             }
             else if(entityB.components.physics.name == 'star' && !entityB.components.physics.pick){
                 entityB.components.physics.pick = true;
