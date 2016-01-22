@@ -10,7 +10,7 @@ var PhysicsComponent = function(entity) {
 
     this.size= {
         x: 0.07,
-        y: 0.07
+        y: 0.06
     };
 
     this.position = {

@@ -18,7 +18,7 @@ html, body {
 	radial-gradient(rgba(255,255,255,.4), rgba(255,255,255,.1) 2px, transparent 10px),
 	radial-gradient(rgba(255,255,255,.4), rgba(255,255,255,.1) 2px, transparent 10px);
 	background-size: 550px 550px, 350px 300px, 200px 250px, 250px 250px, 350px 250px; 
-	background-position: 0 0, 40px 60px, 130px 220px, 70px 300px, 20px 80px;
+	background-position: 200px 0, 240px 60px, 330px 220px, 70px 300px, 220px 80px;
 }
 
 .info_page{

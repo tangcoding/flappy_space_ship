@@ -1,14 +1,13 @@
 var PhysicsComponent = function(entity) {
     this.entity = entity;
     this.name = "pipe";
-    this.type = 'circle';
+    this.type = 'rect';
     this.pass = false;
-    this.radius = 0.5;
 
-    // this.size= {
-    //     x: 0.1,
-    //     y: 0.6
-    // };
+    this.size= {
+        x: 0.1,
+        y: 0.6
+    };
 
     this.position = {
         x: 0.5 ,

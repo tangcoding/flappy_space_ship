@@ -27,8 +27,7 @@ CollisionSystem.prototype.tick = function() {
 
         if (!entityA.components.collision.collidesWith(entityB)) {
             // add score if passing a pipe
-            if(entityB.components.physics.name == 'pipe' && !entityB.components.physics.pass&& entityB.components.physics.position.x + entityB.components.physics.radius < entityA.components.physics.position.x){
-                // entityA.components.physics.score += 50;
+            if(entityB.components.physics.name == 'pipe' && !entityB.components.physics.pass&& entityB.components.physics.position.x + entityB.components.physics.size.x < entityA.components.physics.position.x){
                 entityB.components.physics.pass = true;
                 entityA.components.physics.pass_pipe_num += 1;
 
@@ -47,7 +46,6 @@ CollisionSystem.prototype.tick = function() {
                 entityB.components.physics.pick = true;
                 del_idx = i;
                 document.getElementById('score').innerHTML += '&star;';
-                // document.getElementById('final_score').innerHTML  += '&star;';
             }
         }
 

@@ -1,6 +1,6 @@
 var graphicsComponent = require("../components/graphics/star");
 var physicsComponent = require("../components/physics/star_physics");
-var collisionComponent = require("../components/collision/circle");
+var collisionComponent = require("../components/collision/rect");
 
 
 var Star = function( star_y) {
@@ -9,7 +9,7 @@ var Star = function( star_y) {
 
 
     var graphics = new graphicsComponent.StarGraphicsComponent(this);
-    var collision = new collisionComponent.CircleCollisionComponent(this, physics.radius);
+    var collision = new collisionComponent.RectCollisionComponent(this, physics.size);
     
     this.components = {
         physics: physics,

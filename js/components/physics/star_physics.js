@@ -1,14 +1,14 @@
 var PhysicsComponent = function(entity) {
     this.entity = entity;
     this.name = "star";
-    this.type = 'circle';
+    this.type = 'rect';
     this.pick = false;
-    this.radius = 0.01;
 
-    // this.size= {
-    //     x: 0.1,
-    //     y: 0.6
-    // };
+
+    this.size= {
+        x: 0.02,
+        y: 0.03
+    };
 
     this.position = {
         x: 0.5 ,
