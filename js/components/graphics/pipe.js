@@ -13,16 +13,13 @@ PipeGraphicsComponent.prototype.draw = function(context) {
     //change rock figure as level changes
     var level = document.getElementById("level").innerHTML;
     level = parseInt(level);
-
-    if(level%3 == 1){
-        img = document.getElementById("rock1");
-    }
-    else if(level%3 == 2){
+    var img = document.getElementById("rock1");
+    if(level%3 == 2){
         img = document.getElementById("rock2");
     }
-    else{
+    else if(level%3 == 0){
         img = document.getElementById("rock3");
-    } 
+    }
 
     // context.fillStyle = "green";
     // context.beginPath();

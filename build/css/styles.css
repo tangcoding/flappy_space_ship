@@ -83,9 +83,8 @@ button{
 	margin-right: 8px;
 	margin-left: 8px;
 	font-size: 18px;
-	font-weight: bolder;
 	background: #FFC107;
-	border: 3px solid #FFC107;
+	border: 3px solid #fff;
 }
 
 #result, #top_scores{
@@ -127,7 +126,8 @@ button{
 	.info_page h3{font-size: 0.7rem;}
 	#top_scores{width: 90%;}
 	#score_board{font-size: 0.75rem;}
-	.ctrl_btn, .level_btn{font-size: 0.7rem;}
+	.ctrl_btn, .level_btn {font-size: 0.7rem;}
+	.page_btn {font-size: 15px;}
 	#level_wrap{width: 180px;}
 	.level_btn{width: 35px; height: 35px; padding: 3px;}
 	.ltext{font-size: 12px;}

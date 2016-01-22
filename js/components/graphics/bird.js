@@ -8,8 +8,15 @@ BirdGraphicsComponent.prototype.draw = function(context) {
      // console.log("x: "+ position.x + "; y: " + position.y);
 
 	context.save();
-    var image = document.getElementById("bird");
-    context.drawImage(image, position.x, position.y, size.x, size.y);
+    //change spaceship figure as level changes
+    var level = document.getElementById("level").innerHTML;
+    level = parseInt(level);
+    var img = document.getElementById("bird1");
+    if(level%2 == 0){
+        img = document.getElementById("bird2");
+    }
+
+    context.drawImage(img, position.x, position.y, size.x, size.y);
     context.restore();
 };
 

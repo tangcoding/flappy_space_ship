@@ -46,9 +46,17 @@ InputSystem.prototype.onGameStart = function() {
     document.getElementById('level').innerHTML = bird.components.physics.level;
     bird.components.physics.position.x = 0; //reset position
     bird.components.physics.position.y = 0.5; 
-    bird.components.physics.velocity.x = 0.02; //reset velocity
+
+    if( bird.components.physics.level%2 == 1 ){
+        bird.components.physics.acceleration.y = -1.2; //reset velocity based on level 
+    }
+    else{
+        bird.components.physics.acceleration.y = -1.2; //reset velocity based on level
+    }
+
     bird.components.physics.velocity.y = 0; 
     bird.components.physics.pass_pipe_num = 0;
+
     if(bird.components.physics.level % 3 ==1){ 
         document.getElementById('main-canvas').style.backgroundColor = '#104E8B';
     }
@@ -60,7 +68,6 @@ InputSystem.prototype.onGameStart = function() {
     }
 
     window.setTimeout(function(){bird.components.physics.status = 'move';}, 200);   
-
     document.getElementById('score_board').style.display = 'block';
 };
 

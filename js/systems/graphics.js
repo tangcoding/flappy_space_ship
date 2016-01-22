@@ -74,11 +74,11 @@ GraphicsSystem.prototype.add_pipes_star = function() {
         };
 
         var pipe_y = random_range(0, 0.35 + level*0.03); //randomly set the left_bottom cornor of pipe
-        var pipe_size1 = random_range(0.06, 0.16); // random pipe_size
+        var pipe_size1 = random_range(0.08, 0.135); // random pipe_size
         var pipe_gap = random_range(0.03, 0.06);
 
-        pipe_gap += pipe_size1 + 0.35 +  level*0.02;
-        var pipe_size2 = random_range(0.06, 0.16);
+        pipe_gap += pipe_size1 + 0.3 +  level*0.02;
+        var pipe_size2 = random_range(0.08, 0.135);
         this.entities.push(new pipe.Pipe(pipe_y, pipe_size1));
         this.entities.push(new pipe.Pipe(pipe_y + pipe_gap, pipe_size2)); // draw a pair of pipes
 

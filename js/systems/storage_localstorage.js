@@ -91,14 +91,12 @@ StorageSystem.prototype.show_score = function(max_level, base, star_obj) {
         if(star_obj[level_num]){ star_text = star_obj[level_num] };
 
         text_node.innerHTML = '<p class="ltext">' + level_num + '</p><p class="star_text" id="l' + level_num + '_star">' + star_text + '</p>';
-        level_wrap.appendChild(text_node);
-    }
 
-    if(max_level > base){ // make the on_going level active
-        for( var i = base + 1; i <= max_level; i++){
-            var lbtn_id = 'lbtn_' + i;
-            document.getElementById(lbtn_id).className  += ' level_btn_active';  
-        }   
+        if(level_num <= max_level){
+            text_node.className += " level_btn_active";
+        }
+
+        level_wrap.appendChild(text_node);
     }
 };
 

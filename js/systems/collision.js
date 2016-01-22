@@ -41,7 +41,7 @@ CollisionSystem.prototype.tick = function() {
         }
         else{
             if(entityB.components.physics.name == 'pipe'){ //collide with pipes
-                this.end_game = true;
+                // this.end_game = true;
             }
             else if(entityB.components.physics.name == 'star' && !entityB.components.physics.pick){
                 entityB.components.physics.pick = true;
@@ -83,11 +83,15 @@ CollisionSystem.prototype.tick = function() {
                 document.getElementById(lbtn_id).innerHTML = new_text; 
             }
 
-            if(entityA.components.physics.level + 1> entityA.components.physics.max_level && entityA.components.physics.level + 1 <=9){
+            if(entityA.components.physics.level + 1> entityA.components.physics.max_level ){
                 entityA.components.physics.max_level = entityA.components.physics.level + 1;
-                var lbtn_id = 'lbtn_' + entityA.components.physics.max_level ;
-                document.getElementById(lbtn_id).className  += ' level_btn_active';
             }
+            if(entityA.components.physics.max_level > entityA.components.physics.base + 9){
+                entityA.components.physics.base += 9;
+                this.storageSystem.inprogress_setup();
+            }
+            var lbtn_id = 'lbtn_' + entityA.components.physics.max_level ;
+            document.getElementById(lbtn_id).className  += ' level_btn_active';
         }
 
         document.getElementById('result').style.display='block';
