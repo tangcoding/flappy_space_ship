@@ -7,6 +7,7 @@ var PhysicsComponent = function(entity) {
     this.pass_pipe_num = 0;
     this.rest_pipe_num = false;
     this.base = 0;
+    this.star_obj = null;
 
     this.size= {
         x: 0.07,

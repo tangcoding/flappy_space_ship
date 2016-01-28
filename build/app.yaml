@@ -1,0 +1,28 @@
+application:  flappyspaceship-1201
+version: alpha-001
+runtime: python27
+api_version: 1
+threadsafe: true
+
+# inbound_services:
+# - channel_presence
+
+handlers:
+
+- url: /js
+  static_dir: js
+
+- url: /img
+  static_dir: img
+
+- url: /css
+  static_dir: css
+
+- url: /.*
+  script: fss.app
+
+# [START libraries]
+libraries:
+- name: webapp2
+  version: 2.5.1
+# [END libraries]

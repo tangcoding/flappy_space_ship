@@ -4,10 +4,9 @@ var PipeGraphicsComponent = function(entity) {
 
 PipeGraphicsComponent.prototype.draw = function(context) {
 
-	 var position = this.entity.components.physics.position;
-	 var size = this.entity.components.physics.size;
+	var position = this.entity.components.physics.position;
+	var size = this.entity.components.physics.size;
 
-	context.save();
     //change rock figure as level changes
     var level = document.getElementById("level").innerHTML;
     level = parseInt(level);
@@ -20,7 +19,6 @@ PipeGraphicsComponent.prototype.draw = function(context) {
     }
 
     context.drawImage( img, position.x , position.y , size.x, size.y);
-    context.restore();
 };
 
 exports.PipeGraphicsComponent = PipeGraphicsComponent;

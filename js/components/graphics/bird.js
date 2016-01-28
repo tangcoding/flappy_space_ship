@@ -3,11 +3,10 @@ var BirdGraphicsComponent = function(entity) {
 };
 
 BirdGraphicsComponent.prototype.draw = function(context) {
-	 var position = this.entity.components.physics.position;
-     var size = this.entity.components.physics.size;
-     // console.log("x: "+ position.x + "; y: " + position.y);
+	var position = this.entity.components.physics.position;
+    var size = this.entity.components.physics.size;
+    // console.log("x: "+ position.x + "; y: " + position.y);
 
-	context.save();
     //change spaceship figure as level changes
     var level = document.getElementById("level").innerHTML;
     level = parseInt(level);
@@ -17,7 +16,6 @@ BirdGraphicsComponent.prototype.draw = function(context) {
     }
 
     context.drawImage(img, position.x, position.y, size.x, size.y);
-    context.restore();
 };
 
 exports.BirdGraphicsComponent = BirdGraphicsComponent;
